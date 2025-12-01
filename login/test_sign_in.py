@@ -104,6 +104,7 @@ class SignInTests(unittest.TestCase):
         return ElementHelpers.element_exists(self.driver, selectors, timeout=3)
 
 
+#errors in the tooltip code to get the tooltip error message
     # ============================
     # TC-SI-000: Tooltip for invalid email
     # ============================
