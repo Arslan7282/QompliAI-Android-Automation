@@ -54,6 +54,26 @@ class SignInTests(unittest.TestCase):
             return None
 
     # ============================
+    # Helper: Find tooltip text
+    # ============================
+    def get_tooltip_text(self, expected_substring, timeout=6):
+        """
+        Finds tooltip text matching expected_substring anywhere in TextViews.
+        Returns text if found, None if not found.
+        """
+        end_time = time.time() + timeout
+        while time.time() < end_time:
+            # search all text views
+            elems = self.driver.find_elements(AppiumBy.CLASS_NAME, "android.widget.TextView")
+            for e in elems:
+                txt = e.text or ""
+                if expected_substring in txt:
+                    return txt
+            time.sleep(0.3)
+        return None
+
+
+    # ============================
     # Init / Cleanup
     # ============================
     @classmethod
@@ -83,8 +103,48 @@ class SignInTests(unittest.TestCase):
         ]
         return ElementHelpers.element_exists(self.driver, selectors, timeout=3)
 
+
     # ============================
-    # TC-SI-001
+    # TC-SI-000: Tooltip for invalid email
+    # ============================
+    def test_000_invalid_email_tooltip(self):
+        print("\n=== TC-SI-000: Invalid Email Tooltip Check ===")
+
+        # Ensure we are on the sign-in screen
+        self.ensure_sign_in_page()
+
+        # Enter invalid email
+        ElementHelpers.safe_send_keys(
+            self.driver,
+            [(AppiumBy.XPATH, "//android.widget.EditText[contains(@hint,'Email')]")],
+            "dgfg"
+        )
+
+        # Try to trigger validation
+        try:
+            self.driver.hide_keyboard()
+        except:
+            pass
+
+        # Tap Sign In to force validation
+        AuthHelpers.submit_login(self.driver)
+        time.sleep(1)
+
+        # EXPECTED TEXT FROM YOUR SCREENSHOT
+        expected = "Please include an '@' in the email address"
+
+        tooltip_text = self.get_tooltip_text(expected)
+
+        print("Tooltip Found:", tooltip_text)
+
+        self.assertIsNotNone(
+            tooltip_text,
+            f"Tooltip not found! Expected part: {expected}"
+        )
+
+
+    # ============================
+    # TC-SI-001 valid email
     # ============================
     def test_001_sign_in(self):
         email = TEST_CREDENTIALS.get("valid_email")
