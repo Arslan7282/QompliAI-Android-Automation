@@ -214,3 +214,4 @@ class AuthHelpers:
     def navigate_to_signup(driver: WebDriver) -> bool:
         """Navigate to Sign Up page"""
         return ElementHelpers.safe_click(driver, [AuthHelpers.SIGN_UP_LINK])
+# asdf

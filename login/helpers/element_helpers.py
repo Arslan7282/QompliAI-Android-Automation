@@ -23,7 +23,7 @@ class ElementHelpers:
             except (TimeoutException, NoSuchElementException):
                 continue
         return False
-
+    # dfsasdfasd
     @staticmethod
     def wait_for_element(driver: WebDriver, selectors: List[Tuple], timeout: int = 3):
         """Wait for and return the first element found from the list of selectors"""
